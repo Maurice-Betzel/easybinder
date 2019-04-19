@@ -119,10 +119,10 @@ public class AutoBinder<BEAN> extends ReflectionBinder<BEAN> {
                             memberField.getName(), objectWithMemberFields.getClass().getName()));
         }
 
-        HasValue<ValueChangeEvent<?>, ?> field;
+        HasValue field;
         // Get the field from the object
         try {
-            field = (HasValue<ValueChangeEvent<?>, ?>) ReflectTools.getJavaFieldValue(objectWithMemberFields, memberField, HasValue.class);
+            field = (HasValue) ReflectTools.getJavaFieldValue(objectWithMemberFields, memberField, HasValue.class);
         } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
             log.log(Level.INFO, "Not able to determine type of field");
             // If we cannot determine the value, just skip the field
@@ -198,16 +198,16 @@ public class AutoBinder<BEAN> extends ReflectionBinder<BEAN> {
     }
 
     protected Component createAndBind(Field f, String path) {
-        Optional<Component> c = ComponentFactoryRegistry.getInstance().createComponent(f);
-        if (!c.isPresent()) {
+        Optional<Component> component = ComponentFactoryRegistry.getInstance().createComponent(f);
+        if (!component.isPresent()) {
             throw new RuntimeException("No Component factory matches field, field=<" + f + ">");
         }
 
-        if (c.get() instanceof HasValue<?, ?>) {
-            HasValue<?, ?> h = (HasValue<?, ?>) c.get();
-            bind(h, path + f.getName());
+        if (component.get() instanceof HasValue) {
+            HasValue hasValue = (HasValue) component.get();
+            bind(hasValue, path + f.getName());
         }
-        return c.get();
+        return component.get();
     }
 
     protected <T> void buildAndBind(Class<?> currentClazz, String path, List<Component> components,

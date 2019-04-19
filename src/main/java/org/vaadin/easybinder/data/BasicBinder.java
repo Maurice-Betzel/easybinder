@@ -292,7 +292,7 @@ public class BasicBinder<BEAN> {
 
     protected Class<?>[] groups = new Class<?>[0];
 
-    protected EventRouter eventRouter;
+    //protected EventRouter eventRouter;
 
     protected BasicBinderValidationStatusHandler<BEAN> statusHandler;
 

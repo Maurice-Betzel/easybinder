@@ -15,9 +15,9 @@
  */
 package org.vaadin.easybinder.data.converters;
 
-import com.vaadin.data.Converter;
-import com.vaadin.data.Result;
-import com.vaadin.data.ValueContext;
+import com.vaadin.flow.data.converter.Converter;
+import com.vaadin.flow.data.binder.Result;
+import com.vaadin.flow.data.binder.ValueContext;
 
 @SuppressWarnings("serial")
 public class NullConverter<T> implements Converter<T, T> {

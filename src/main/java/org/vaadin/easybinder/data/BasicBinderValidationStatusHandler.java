@@ -18,7 +18,9 @@
  */
 package org.vaadin.easybinder.data;
 
-import com.vaadin.event.SerializableEventListener;
+import com.vaadin.flow.data.binder.BinderValidationStatusHandler;
+import com.vaadin.flow.data.binder.BindingValidationStatus;
+import com.vaadin.flow.function.SerializableEventListener;
 
 /**
  * Handler for {@link BasicBinderValidationStatus} changes.

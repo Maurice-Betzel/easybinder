@@ -1,8 +1,8 @@
 package org.vaadin.easybinder.data.converters;
 
-import com.vaadin.data.Converter;
-import com.vaadin.data.Result;
-import com.vaadin.data.ValueContext;
+import com.vaadin.flow.data.converter.Converter;
+import com.vaadin.flow.data.binder.Result;
+import com.vaadin.flow.data.binder.ValueContext;
 
 public class StringLengthConverterValidator implements Converter<String, String> {
 

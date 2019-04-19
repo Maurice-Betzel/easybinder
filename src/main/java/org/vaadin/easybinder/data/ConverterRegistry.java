@@ -27,20 +27,32 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.vaadin.flow.data.converter.Converter;
+import com.vaadin.flow.data.converter.LocalDateTimeToDateConverter;
+import com.vaadin.flow.data.converter.LocalDateToDateConverter;
+import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
+import com.vaadin.flow.data.converter.StringToBigIntegerConverter;
+import com.vaadin.flow.data.converter.StringToBooleanConverter;
+import com.vaadin.flow.data.converter.StringToDoubleConverter;
+import com.vaadin.flow.data.converter.StringToFloatConverter;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.converter.StringToLongConverter;
 import org.vaadin.easybinder.data.converters.NullConverter;
 import org.vaadin.easybinder.data.converters.StringLengthConverterValidator;
 
-import com.vaadin.data.Converter;
-import com.vaadin.data.Result;
-import com.vaadin.data.converter.LocalDateTimeToDateConverter;
-import com.vaadin.data.converter.LocalDateToDateConverter;
-import com.vaadin.data.converter.StringToBigDecimalConverter;
-import com.vaadin.data.converter.StringToBigIntegerConverter;
-import com.vaadin.data.converter.StringToBooleanConverter;
-import com.vaadin.data.converter.StringToDoubleConverter;
-import com.vaadin.data.converter.StringToFloatConverter;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.converter.StringToLongConverter;
+import com.vaadin.flow.data.binder.Result;
+
+//import com.vaadin.data.Converter;
+//import com.vaadin.data.Result;
+//import com.vaadin.data.converter.LocalDateTimeToDateConverter;
+//import com.vaadin.data.converter.LocalDateToDateConverter;
+//import com.vaadin.data.converter.StringToBigDecimalConverter;
+//import com.vaadin.data.converter.StringToBigIntegerConverter;
+//import com.vaadin.data.converter.StringToBooleanConverter;
+//import com.vaadin.data.converter.StringToDoubleConverter;
+//import com.vaadin.data.converter.StringToFloatConverter;
+//import com.vaadin.data.converter.StringToIntegerConverter;
+//import com.vaadin.data.converter.StringToLongConverter;
 
 public class ConverterRegistry {
 	static ConverterRegistry instance;

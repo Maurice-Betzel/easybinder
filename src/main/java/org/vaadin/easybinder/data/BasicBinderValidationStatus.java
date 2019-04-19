@@ -25,9 +25,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.vaadin.data.BindingValidationStatus;
-import com.vaadin.data.ValidationResult;
-import com.vaadin.server.SerializablePredicate;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.BinderValidationStatusHandler;
+import com.vaadin.flow.data.binder.BindingValidationStatus;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.function.SerializablePredicate;
 
 /**
  * Binder validation status change. Represents the outcome of binder level
@@ -133,7 +135,7 @@ public class BasicBinderValidationStatus<BEAN> implements Serializable {
 	 * Gets the field level validation statuses.
 	 * <p>
 	 * The field level validators have been added with
-	 * {@link BindingBuilder#withValidator(Validator)}.
+	 * {@link Binder.BindingBuilder#withValidator(Validator)}.
 	 *
 	 * @return the field validation statuses
 	 */
@@ -154,7 +156,7 @@ public class BasicBinderValidationStatus<BEAN> implements Serializable {
 	 * Gets the failed field level validation statuses.
 	 * <p>
 	 * The field level validators have been added with
-	 * {@link BindingBuilder#withValidator(Validator)}.
+	 * {@link Binder.BindingBuilder#withValidator(Validator)}.
 	 *
 	 * @return a list of failed field level validation statuses
 	 */

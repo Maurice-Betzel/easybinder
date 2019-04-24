@@ -18,16 +18,8 @@
  */
 package org.vaadin.easybinder.data;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +39,8 @@ import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.data.converter.Converter;
+import com.vaadin.flow.function.SerializableConsumer;
+import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 
@@ -99,7 +93,8 @@ public class BasicBinder<BEAN> {
             }
         };
 
-        public EasyBinding(BasicBinder<BEAN> binder, HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> field, ValueProvider<BEAN, TARGET> getter,
+        public EasyBinding(BasicBinder<BEAN> binder, HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> field,
+                           ValueProvider<BEAN, TARGET> getter,
                            Setter<BEAN, TARGET> setter, String property,
                            Converter<FIELDVALUE, TARGET> converterValidatorChain) {
             this.field = field;
@@ -226,10 +221,9 @@ public class BasicBinder<BEAN> {
         //@Override
         //@SuppressWarnings("deprecation")
         public BindingValidationStatus<TARGET> validate(boolean fireEvent) {
-            BindingValidationStatus<TARGET> status = new BindingValidationStatus<TARGET>(this, hasError() ? Status.ERROR : Status.OK,
-                    conversionError != null ? ValidationResult.error(conversionError)
-                            : validationError != null ? ValidationResult.error(validationError)
-                            : ValidationResult.ok());
+            //set validation OK result
+            Result result = hasError() ? Result.error(getError().get()) : Result.ok(null);
+            BindingValidationStatus<TARGET> status = new BindingValidationStatus(result, this);
             if (fireEvent) {
                 getValidationStatusHandler().statusChange(status);
             }
@@ -293,6 +287,9 @@ public class BasicBinder<BEAN> {
     protected Class<?>[] groups = new Class<?>[0];
 
     //protected EventRouter eventRouter;
+
+    //Event router replacement
+    private HashMap<Class<?>, List<Consumer<?>>> listeners = new HashMap<>();
 
     protected BasicBinderValidationStatusHandler<BEAN> statusHandler;
 
@@ -418,8 +415,7 @@ public class BasicBinder<BEAN> {
         return bindings.stream().map(e -> e.getField());
     }
 
-    protected void handleConstraintViolations(ConstraintViolation<BEAN> v,
-                                              Function<ConstraintViolation<BEAN>, String> f) {
+    protected void handleConstraintViolations(ConstraintViolation<BEAN> v, Function<ConstraintViolation<BEAN>, String> f) {
         String property = v.getPropertyPath().toString();
         if (property.isEmpty()) {
             // Bean level validation error
@@ -488,9 +484,28 @@ public class BasicBinder<BEAN> {
      * @see ValueChangeEvent
      * @see ValueChangeListener
      */
-    public Registration addValueChangeListener(ValueChangeListener<?> listener) {
-        return getEventRouter().addListener(ValueChangeEvent.class, listener,
-                ValueChangeListener.class.getDeclaredMethods()[0]);
+//    public Registration addValueChangeListener(ValueChangeListener<?> listener) {
+//        //return addListener(ValueChangeEvent.class, listener, ValueChangeListener.class.getDeclaredMethods()[0]);
+//        return addListener(ValueChangeEvent.class, listener::valueChanged);
+//    }
+
+    /**
+     * Adds a listener to the binder.
+     *
+     * @param eventType the type of the event
+     * @param method    the consumer method of the listener
+     * @param <T>       the event type
+     * @return a registration for the listener
+     */
+    protected <T> Registration addListener(Class<T> eventType, Consumer<T> method) {
+        List<Consumer<?>> list = listeners.computeIfAbsent(eventType, key -> new ArrayList<>());
+        list.add(method);
+        return new Registration() {
+            @Override
+            public void remove() {
+                list.remove(method);
+            }
+        };
     }
 
     /**
@@ -498,12 +513,12 @@ public class BasicBinder<BEAN> {
      *
      * @return the event router, not null
      */
-    protected EventRouter getEventRouter() {
-        if (eventRouter == null) {
-            eventRouter = new EventRouter();
-        }
-        return eventRouter;
-    }
+//    protected EventRouter getEventRouter() {
+//        if (eventRouter == null) {
+//            eventRouter = new EventRouter();
+//        }
+//        return eventRouter;
+//    }
 
     /**
      * Adds status change listener to the binder.
@@ -521,24 +536,40 @@ public class BasicBinder<BEAN> {
      * @see #setBean(Object)
      * @see #removeBean()
      */
-    public Registration addStatusChangeListener(BinderStatusChangeListener listener) {
-        return getEventRouter().addListener(BinderStatusChangeEvent.class, listener,
-                BinderStatusChangeListener.class.getDeclaredMethods()[0]);
-    }
-
+//    public Registration addStatusChangeListener(BinderStatusChangeListener listener) {
+//        List<Consumer<?>> list = listeners.computeIfAbsent(BinderStatusChangeListener.class, key -> new ArrayList<>());
+//        list.add(BinderStatusChangeListener.class.getDeclaredMethods()[0])
+//
+//
+//        return listeners.put(BinderStatusChangeEvent.class, listener, BinderStatusChangeListener.class.getDeclaredMethods()[0]);
+//    }
     public boolean getHasChanges() {
         return hasChanges;
     }
 
     protected <V> void fireValueChangeEvent(ValueChangeEvent<V> event) {
         hasChanges = true;
-        getEventRouter().fireEvent(event);
+        fireEvent(event);
     }
 
     protected void fireStatusChangeEvent() {
         boolean hasConversionErrors = bindings.stream().anyMatch(e -> e.hasConversionError());
-        getEventRouter()
-                .fireEvent(new BinderStatusChangeEvent(this, hasConversionErrors, !constraintViolations.isEmpty()));
+        fireEvent(new BinderStatusChangeEvent(this, hasConversionErrors, !constraintViolations.isEmpty()));
+    }
+
+//    private void fireStatusChangeEvent(boolean hasValidationErrors) {
+//        StatusChangeEvent event = new StatusChangeEvent(this, hasValidationErrors);
+//        fireEvent(event);
+//    }
+
+    private void fireEvent(Object event) {
+        listeners.entrySet().stream().filter(
+                entry -> entry.getKey().isAssignableFrom(event.getClass()))
+                .forEach(entry -> {
+                    for (Consumer consumer : entry.getValue()) {
+                        consumer.accept(event);
+                    }
+                });
     }
 
     public Optional<EasyBinding<BEAN, ?, ?>> getBinding(String propertyName) {

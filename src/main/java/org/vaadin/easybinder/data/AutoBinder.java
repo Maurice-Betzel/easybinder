@@ -217,7 +217,7 @@ public class AutoBinder<BEAN> extends ReflectionBinder<BEAN> {
         Map<String, List<String>> nestedPropertyMap = new HashMap<>();
 
         for (String p : nestedProperties) {
-            int index = p.indexOf('.', 0);
+            int index = p.indexOf('.');
             String current = index == -1 ? p : p.substring(0, index);
             List<String> next = nestedPropertyMap.get(current);
             if (next == null) {
@@ -225,7 +225,7 @@ public class AutoBinder<BEAN> extends ReflectionBinder<BEAN> {
                 nestedPropertyMap.put(current, next);
             }
             if (index != -1) {
-                next.add(p.substring(index + 1, p.length()));
+                next.add(p.substring(index + 1));
             }
         }
 
@@ -305,4 +305,3 @@ public class AutoBinder<BEAN> extends ReflectionBinder<BEAN> {
     }
 
 }
-

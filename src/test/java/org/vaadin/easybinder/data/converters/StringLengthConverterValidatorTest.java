@@ -4,9 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.vaadin.flow.data.binder.Result;
 import org.junit.Test;
-
-import com.vaadin.data.Result;
 
 public class StringLengthConverterValidatorTest {
 

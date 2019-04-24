@@ -11,14 +11,13 @@ import java.util.HashSet;
 
 import javax.validation.constraints.Min;
 
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.data.binder.PropertyId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.vaadin.easybinder.data.AutoBinder;
 
-import com.vaadin.annotations.PropertyId;
-import com.vaadin.data.HasValue;
-import com.vaadin.ui.AbstractField;
 
 import net.avh4.test.junit.Nested;
 

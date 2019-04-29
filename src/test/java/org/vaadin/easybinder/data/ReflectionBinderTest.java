@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.EnumSet;
 import java.util.Optional;
@@ -19,20 +20,20 @@ import java.util.Set;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.RequiredFieldConfigurator;
+import com.vaadin.flow.data.binder.Result;
+import com.vaadin.flow.data.converter.Converter;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import org.junit.Test;
 import org.vaadin.easybinder.data.BasicBinder.EasyBinding;
-import org.vaadin.easybinder.ui.EComboBox;
-import org.vaadin.easybinder.ui.EGTypeComponentAdapter;
+//import org.vaadin.easybinder.ui.EComboBox;
+//import org.vaadin.easybinder.ui.EGTypeComponentAdapter;
 
-import com.vaadin.data.Converter;
-import com.vaadin.data.HasValue;
-import com.vaadin.data.Result;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.RadioButtonGroup;
-import com.vaadin.ui.Slider;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.TwinColSelect;
 
 public class ReflectionBinderTest {
 	static enum TestEnum {
@@ -150,17 +151,17 @@ public class ReflectionBinderTest {
 		assertEquals(TestEnum.class, binder.getPresentationTypeForField(r).get());
 	}
 
-	@Test
-	public void testGetFieldTypeForHasGenericType() {
-		EComboBox<TestEnum> r = new EComboBox<>(TestEnum.class);
-		assertTrue(binder.getPresentationTypeForField(r).isPresent());
-		assertEquals(TestEnum.class, binder.getPresentationTypeForField(r).get());
-	}
+//	@Test
+//	public void testGetFieldTypeForHasGenericType() {
+//		EComboBox<TestEnum> r = new EComboBox<>(TestEnum.class);
+//		assertTrue(binder.getPresentationTypeForField(r).isPresent());
+//		assertEquals(TestEnum.class, binder.getPresentationTypeForField(r).get());
+//	}
 
 	@Test
 	public void testGetFieldTypeForGenericFieldWithEmptyValue() {
 		@SuppressWarnings("unchecked")
-		HasValue<TestEnum> r = mock(HasValue.class);
+		HasValue<?, TestEnum> r = mock(HasValue.class);
 		when(r.getEmptyValue()).thenReturn(TestEnum.Test1);
 		assertTrue(binder.getPresentationTypeForField(r).isPresent());
 		assertEquals(TestEnum.class, binder.getPresentationTypeForField(r).get());
@@ -177,7 +178,8 @@ public class ReflectionBinderTest {
 	@Test
 	public void testGetFieldTypeForGenericFieldWithItems() {
 		EnumSet<TestEnum> set = EnumSet.allOf(TestEnum.class);
-		RadioButtonGroup<TestEnum> r = new RadioButtonGroup<TestEnum>("", set);
+		RadioButtonGroup<TestEnum> r = new RadioButtonGroup<TestEnum>();
+		r.setItems(set);
 		assertTrue(binder.getPresentationTypeForField(r).isPresent());
 		assertEquals(TestEnum.class, binder.getPresentationTypeForField(r).get());
 	}
@@ -185,14 +187,15 @@ public class ReflectionBinderTest {
 	@Test
 	public void testGetFieldTypeForGenericFieldWithNoItems() {
 		EnumSet<TestEnum> set = EnumSet.noneOf(TestEnum.class);
-		RadioButtonGroup<TestEnum> r = new RadioButtonGroup<TestEnum>("", set);
+		RadioButtonGroup<TestEnum> r = new RadioButtonGroup<TestEnum>();
+		r.setItems(set);
 		// We don't expect any more than an empty optional
 		assertNotNull(binder.getPresentationTypeForField(r));
 	}
 
 	@Test
 	public void testGetFieldTypeForGenericFieldWithNoInfo() {
-		RadioButtonGroup<TestEnum> r = new RadioButtonGroup<TestEnum>("");
+		RadioButtonGroup<TestEnum> r = new RadioButtonGroup<TestEnum>();
 		// We don't expect any more than an empty optional
 		assertNotNull(binder.getPresentationTypeForField(r));
 	}
@@ -200,26 +203,26 @@ public class ReflectionBinderTest {
 	@Test
 	public void testGetFieldTypeForFieldWithNoInfo() {
 		@SuppressWarnings("unchecked")
-		HasValue<TestEnum> r = mock(HasValue.class);
+		HasValue<?, TestEnum> r = mock(HasValue.class);
 		// We don't expect any more than an empty optional
 		assertNotNull(binder.getPresentationTypeForField(r));
 	}
 
-	@Test
-	public void testGetFieldTypeForAnonymousInstanceOfGenericCollectionField() {
-		@SuppressWarnings("serial")
-		TwinColSelect<String> r = new TwinColSelect<String>() {};
-		assertTrue(binder.getPresentationTypeForField(r).isPresent());
-		assertEquals(Set.class, binder.getPresentationTypeForField(r).get());
-	}
+//	@Test
+//	public void testGetFieldTypeForAnonymousInstanceOfGenericCollectionField() {
+//		@SuppressWarnings("serial")
+//		TwinColSelect<String> r = new TwinColSelect<String>() {};
+//		assertTrue(binder.getPresentationTypeForField(r).isPresent());
+//		assertEquals(Set.class, binder.getPresentationTypeForField(r).get());
+//	}
 
-	@Test
-	public void testGetFieldTypeForHasGenericTypeOfGenericCollectionField() {
-		@SuppressWarnings({ "rawtypes" })
-		EGTypeComponentAdapter<Set> r = new EGTypeComponentAdapter<>(Set.class, new TwinColSelect<String>());
-		assertTrue(binder.getPresentationTypeForField(r).isPresent());
-		assertEquals(Set.class, binder.getPresentationTypeForField(r).get());
-	}
+//	@Test
+//	public void testGetFieldTypeForHasGenericTypeOfGenericCollectionField() {
+//		@SuppressWarnings({ "rawtypes" })
+//		EGTypeComponentAdapter<Set> r = new EGTypeComponentAdapter<>(Set.class, new TwinColSelect<String>());
+//		assertTrue(binder.getPresentationTypeForField(r).isPresent());
+//		assertEquals(Set.class, binder.getPresentationTypeForField(r).get());
+//	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBindNoSuchField() {
@@ -240,11 +243,11 @@ public class ReflectionBinderTest {
 		assertNotNull(binding);
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void testBindNoConverterUnrelatedNonStringPresentation() {
-		when(converterRegistry.getConverter(Double.class, int.class)).thenReturn(null);
-		binder.bind(new Slider(), "testInt");
-	}
+//	@Test(expected = RuntimeException.class)
+//	public void testBindNoConverterUnrelatedNonStringPresentation() {
+//		when(converterRegistry.getConverter(Double.class, int.class)).thenReturn(null);
+//		binder.bind(new Slider(), "testInt");
+//	}
 
 	@Test
 	public void testBindTypeErasure() {
@@ -269,36 +272,36 @@ public class ReflectionBinderTest {
 		binding.converterValidatorChain.convertToModel(new Double(10.0), null);
 	}
 
-	@Test
-	public void testBindSet() {
-		when(converterRegistry.getConverter(Set.class, Set.class)).thenReturn(null);
-		@SuppressWarnings("serial")
-		EasyBinding<TestEntity, Set<String>, Set<String>> binding = binder.bind(new TwinColSelect<String>(){}, "testSet");
-		assertNotNull(binding);
-		verify(converterRegistry, times(1)).getConverter(Set.class, Set.class);
-	}
+//	@Test
+//	public void testBindSet() {
+//		when(converterRegistry.getConverter(Set.class, Set.class)).thenReturn(null);
+//		@SuppressWarnings("serial")
+//		EasyBinding<TestEntity, Set<String>, Set<String>> binding = binder.bind(new TwinColSelect<String>(){}, "testSet");
+//		assertNotNull(binding);
+//		verify(converterRegistry, times(1)).getConverter(Set.class, Set.class);
+//	}
 
-	@Test
-	public void testBindEnumSetToSet() {
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Converter<Set, EnumSet> c = mock(Converter.class);
-		when(converterRegistry.getConverter(Set.class, EnumSet.class)).thenReturn(c);
-		@SuppressWarnings("serial")
-		EasyBinding<TestEntity, Set<TestEnum>, EnumSet<TestEnum>> binding = binder.bind(new TwinColSelect<TestEnum>(){}, "testEnumSet");
-		assertNotNull(binding);
-		verify(converterRegistry, times(1)).getConverter(Set.class, EnumSet.class);
-	}
-
-	@Test
-	public void testBindWithConverter() {
-		when(converterRegistry.getConverter(Set.class, EnumSet.class)).thenReturn(null);
-		@SuppressWarnings({ "unchecked" })
-		Converter<Set<TestEnum>, EnumSet<TestEnum>> c = mock(Converter.class);
-		@SuppressWarnings("serial")
-		EasyBinding<TestEntity, Set<TestEnum>, EnumSet<TestEnum>> binding = binder.bind(new TwinColSelect<TestEnum>(){}, "testEnumSet", c);
-		assertNotNull(binding);
-		verify(converterRegistry, never()).getConverter(Set.class, EnumSet.class);
-	}
+//	@Test
+//	public void testBindEnumSetToSet() {
+//		@SuppressWarnings({ "unchecked", "rawtypes" })
+//		Converter<Set, EnumSet> c = mock(Converter.class);
+//		when(converterRegistry.getConverter(Set.class, EnumSet.class)).thenReturn(c);
+//		@SuppressWarnings("serial")
+//		EasyBinding<TestEntity, Set<TestEnum>, EnumSet<TestEnum>> binding = binder.bind(new TwinColSelect<TestEnum>(){}, "testEnumSet");
+//		assertNotNull(binding);
+//		verify(converterRegistry, times(1)).getConverter(Set.class, EnumSet.class);
+//	}
+//
+//	@Test
+//	public void testBindWithConverter() {
+//		when(converterRegistry.getConverter(Set.class, EnumSet.class)).thenReturn(null);
+//		@SuppressWarnings({ "unchecked" })
+//		Converter<Set<TestEnum>, EnumSet<TestEnum>> c = mock(Converter.class);
+//		@SuppressWarnings("serial")
+//		EasyBinding<TestEntity, Set<TestEnum>, EnumSet<TestEnum>> binding = binder.bind(new TwinColSelect<TestEnum>(){}, "testEnumSet", c);
+//		assertNotNull(binding);
+//		verify(converterRegistry, never()).getConverter(Set.class, EnumSet.class);
+//	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBindUnknownProperty() {
@@ -497,7 +500,7 @@ public class ReflectionBinderTest {
 
 	@Test
 	public void testRequiredIndicatorVisible() {
-		AbstractField<String> field = mock(TextField.class);
+		AbstractField<TextField, String> field = mock(TextField.class);
 		EasyBinding<?,?,?> binding = binder.bind(field, "testIntMin1", new StringToIntegerConverter(""));
 		assertNotNull(binding);
 		verify(field, times(1)).setRequiredIndicatorVisible(true);
@@ -505,7 +508,7 @@ public class ReflectionBinderTest {
 
 	@Test
 	public void testRequiredIndicatorNotVisible() {
-		AbstractField<String> field = mock(TextField.class);
+		AbstractField<TextField, String> field = mock(TextField.class);
 		EasyBinding<?,?,?> binding = binder.bind(field, "testIntMin0", new StringToIntegerConverter(""));
 		assertNotNull(binding);
 		verify(field, never()).setRequiredIndicatorVisible(true);
@@ -513,7 +516,7 @@ public class ReflectionBinderTest {
 
 	@Test
 	public void testRequiredIndicatorNotVisibleNoAnnotation() {
-		AbstractField<String> field = mock(TextField.class);
+		AbstractField<TextField, String> field = mock(TextField.class);
 		EasyBinding<?,?,?> binding = binder.bind(field, "testInt", new StringToIntegerConverter(""));
 		assertNotNull(binding);
 		verify(field, never()).setRequiredIndicatorVisible(true);
@@ -521,8 +524,13 @@ public class ReflectionBinderTest {
 
 	@Test
 	public void testRequiredIndicatorVisibleCustomIndicator() {
-		AbstractField<String> field = mock(TextField.class);
-		binder.setRequiredConfigurator(e -> true);
+		AbstractField<TextField, String> field = mock(TextField.class);
+		binder.setRequiredConfigurator(new RequiredFieldConfigurator() {
+			@Override
+			public boolean test(Annotation annotation, Binder.BindingBuilder<?, ?> bindingBuilder) {
+				return true;
+			}
+		});
 		assertNotNull(binder.getRequiredConfigurator());
 		EasyBinding<?,?,?> binding = binder.bind(field, "testIntMin0", new StringToIntegerConverter(""));
 		assertNotNull(binding);

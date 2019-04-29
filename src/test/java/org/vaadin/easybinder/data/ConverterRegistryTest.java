@@ -11,11 +11,11 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.vaadin.flow.data.binder.Result;
+import com.vaadin.flow.data.converter.Converter;
 import org.junit.Test;
 import org.vaadin.easybinder.data.ConverterRegistry;
 
-import com.vaadin.data.Converter;
-import com.vaadin.data.Result;
 
 public class ConverterRegistryTest {
 	ConverterRegistry r = ConverterRegistry.getInstance();

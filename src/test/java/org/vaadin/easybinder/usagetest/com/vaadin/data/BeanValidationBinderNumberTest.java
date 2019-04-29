@@ -10,12 +10,12 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import org.junit.Test;
 
-import com.vaadin.data.BeanValidationBinder;
-import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.ui.TextField;
 
 public class BeanValidationBinderNumberTest {
 

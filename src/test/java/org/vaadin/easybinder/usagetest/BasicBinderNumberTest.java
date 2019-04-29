@@ -7,12 +7,12 @@ import static org.junit.Assert.assertTrue;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import org.junit.Test;
 import org.vaadin.easybinder.data.BasicBinder;
 import org.vaadin.easybinder.data.converters.NullConverter;
 
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.ui.TextField;
 
 public class BasicBinderNumberTest {
 	public static class MyEntity {

@@ -7,10 +7,9 @@ import static org.junit.Assert.assertTrue;
 
 import javax.validation.constraints.Size;
 
+import com.vaadin.flow.component.textfield.TextField;
 import org.junit.Test;
 import org.vaadin.easybinder.data.BasicBinder;
-
-import com.vaadin.ui.TextField;
 
 public class BasicBinderStringTest {
 	public static class MyEntity {

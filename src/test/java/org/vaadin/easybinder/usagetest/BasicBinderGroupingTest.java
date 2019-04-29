@@ -14,14 +14,15 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.StatusChangeListener;
 import org.hibernate.validator.group.GroupSequenceProvider;
 import org.hibernate.validator.spi.group.DefaultGroupSequenceProvider;
 import org.junit.Test;
 import org.vaadin.easybinder.data.BasicBinder;
 import org.vaadin.easybinder.data.BinderStatusChangeListener;
 
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
 
 public class BasicBinderGroupingTest {
 	public static interface MyGroup {
@@ -87,7 +88,7 @@ public class BasicBinderGroupingTest {
 
 		BasicBinder<MyEntity> binder = new BasicBinder<>();
 
-		BinderStatusChangeListener statusChangeListener = mock(BinderStatusChangeListener.class);
+		StatusChangeListener statusChangeListener = mock(StatusChangeListener.class);
 		binder.addStatusChangeListener(statusChangeListener);
 
 		binder.bind(field1, d -> d.getS1() == null ? "" : d.getS1(), (e, f) -> e.setS1("".equals(f) ? null : f), "s1");

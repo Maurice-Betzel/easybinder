@@ -15,13 +15,13 @@ import java.util.Optional;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
 import org.junit.Test;
 
-import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.Query;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.TextField;
 
 public class ComponentFactoryRegistryTest {
 	static enum MyEnum {

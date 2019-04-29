@@ -8,16 +8,15 @@ import java.util.stream.Stream;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.data.binder.*;
+import com.vaadin.flow.function.ValueProvider;
 import org.vaadin.easybinder.data.BasicBinder.EasyBinding;
 
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.function.SerializablePredicate;
-import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 
-@SuppressWarnings("serial")
 public class BinderAdapter<BEAN> extends Binder<BEAN> {
+
 	transient BasicBinder<BEAN> binder;
 	Class<BEAN> clz;
 
@@ -43,30 +42,29 @@ public class BinderAdapter<BEAN> extends Binder<BEAN> {
 		return binder.getBean();
 	}
 
-//	@Override
-//	public <FIELDVALUE> BindingBuilder<BEAN, FIELDVALUE> forField(HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> field) {
-//		throw new UnsupportedOperationException("Not supported");
-//	}
-//
-//	@Override
-//	public <FIELDVALUE> BindingBuilder<BEAN, FIELDVALUE> forMemberField(HasValue<FIELDVALUE> field) {
-//		throw new UnsupportedOperationException("Not supported");
-//	}
-//
-//	@Override
-//	public <FIELDVALUE> Binding<BEAN, FIELDVALUE> bind(HasValue<FIELDVALUE> field,
-//			ValueProvider<BEAN, FIELDVALUE> getter, Setter<BEAN, FIELDVALUE> setter) {
-//		throw new UnsupportedOperationException("Not supported");
-//	}
-//
-//	@Override
-//	public <FIELDVALUE> Binding<BEAN, FIELDVALUE> bind(HasValue<FIELDVALUE> field, String propertyName) {
-//		if (binder instanceof ReflectionBinder) {
-//			return ((ReflectionBinder<BEAN>) binder).bind(field, propertyName);
-//		} else {
-//			throw new UnsupportedOperationException("Not supported");
-//		}
-//	}
+	@Override
+	public <FIELDVALUE> BindingBuilder<BEAN, FIELDVALUE> forField(HasValue<?, FIELDVALUE> field) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public <FIELDVALUE> BindingBuilder<BEAN, FIELDVALUE> forMemberField(HasValue<?, FIELDVALUE> field) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public <FIELDVALUE> Binding<BEAN, FIELDVALUE> bind(HasValue<?, FIELDVALUE> field, ValueProvider<BEAN, FIELDVALUE> getter, Setter<BEAN, FIELDVALUE> setter) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public <FIELDVALUE> Binding<BEAN, FIELDVALUE> bind(HasValue<?, FIELDVALUE> field, String propertyName) {
+		if (binder instanceof ReflectionBinder) {
+			return ((ReflectionBinder<BEAN>) binder).bind(field, propertyName);
+		} else {
+			throw new UnsupportedOperationException("Not supported");
+		}
+	}
 
 	@Override
 	public void setBean(BEAN bean) {
@@ -192,13 +190,13 @@ public class BinderAdapter<BEAN> extends Binder<BEAN> {
 
 	@Override
 	public Registration addStatusChangeListener(StatusChangeListener listener) {
-		return binder.addStatusChangeListener(e -> listener.statusChange(new StatusChangeEvent(this, e.hasErrors())));
+		return binder.addStatusChangeListener(e -> listener.statusChange(new StatusChangeEvent(this, e.hasValidationErrors())));
 	}
 
-//	@Override
-//	public Registration addValueChangeListener(ValueChangeListener<?> listener) {
-//		return binder.addValueChangeListener(listener);
-//	}
+	@Override
+	public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<?>> listener) {
+		return binder.addValueChangeListener(listener);
+	}
 
 	@Override
 	public boolean hasChanges() {
@@ -224,15 +222,15 @@ public class BinderAdapter<BEAN> extends Binder<BEAN> {
 		}
 	}
 
-//	// @Override (Since 8.1)
-//	public Stream<HasValue<?>> getFields() {
-//		return binder.getFields();
-//	}
-//
-//	// @Override (Since 8.2)
-//	public void removeBinding(HasValue<?> field) {
-//		binder.removeBinding(field);
-//	}
+	// @Override (Since 8.1)
+	public Stream<HasValue<?,?>> getFields() {
+		return binder.getFields();
+	}
+
+	// @Override (Since 8.2)
+	public void removeBinding(HasValue<?, ?> field) {
+		binder.removeBinding(field);
+	}
 
 	// @Override (Since 8.2)
 	@SuppressWarnings("unchecked")

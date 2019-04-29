@@ -34,7 +34,6 @@ import java.util.function.BiFunction;
 import java.util.logging.Level;
 
 import com.googlecode.gentyref.GenericTypeReflector;
-import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.data.binder.PropertyDefinition;
@@ -210,8 +209,7 @@ public class AutoBinder<BEAN> extends ReflectionBinder<BEAN> {
         return component.get();
     }
 
-    protected <T> void buildAndBind(Class<?> currentClazz, String path, List<Component> components,
-                                    String... nestedProperties) {
+    protected <T> void buildAndBind(Class<?> currentClazz, String path, List<Component> components, String... nestedProperties) {
         List<Field> fields = getFieldsInDeclareOrder(currentClazz);
 
         Map<String, List<String>> nestedPropertyMap = new HashMap<>();

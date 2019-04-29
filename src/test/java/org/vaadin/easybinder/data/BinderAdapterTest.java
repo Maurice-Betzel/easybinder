@@ -12,6 +12,10 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.StatusChangeListener;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import org.junit.Test;
 import org.vaadin.easybinder.data.AutoBinder;
 import org.vaadin.easybinder.data.BasicBinder.EasyBinding;
@@ -20,10 +24,6 @@ import org.vaadin.easybinder.testentity.Flight;
 import org.vaadin.easybinder.testentity.FlightId;
 import org.vaadin.easybinder.testentity.FlightId.LegType;
 
-import com.vaadin.data.StatusChangeListener;
-import com.vaadin.data.ValidationException;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.ui.TextField;
 
 public class BinderAdapterTest {
 

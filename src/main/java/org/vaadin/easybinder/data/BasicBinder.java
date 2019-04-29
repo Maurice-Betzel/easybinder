@@ -28,16 +28,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.data.binder.Binder.Binding;
 import com.vaadin.flow.data.binder.BindingValidationStatus.Status;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
-import com.vaadin.flow.component.ComponentEventBus;
 import com.vaadin.flow.data.converter.Converter;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableFunction;
@@ -69,7 +66,7 @@ import com.vaadin.flow.shared.Registration;
 public class BasicBinder<BEAN> {
 
     public static class EasyBinding<BEAN, FIELDVALUE, TARGET> implements Binding<BEAN, TARGET> {
-        protected final HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> field;
+        protected final HasValue<?, FIELDVALUE> field;
         protected final ValueProvider<BEAN, TARGET> getter;
         protected final Setter<BEAN, TARGET> setter;
         protected final String property;
@@ -83,9 +80,10 @@ public class BasicBinder<BEAN> {
         protected BindingValidationStatusHandler statusHandler = s -> {
             HasValue<?, ?> field = s.getField();
             if (s.getMessage().isPresent()) {
-//                if (field instanceof Component) {
-//                    ((Component) field).setComponentError(new UserError(s.getMessage().get()));
-//                }
+                if (field instanceof HasValidation) {
+                    ((HasValidation) field).setErrorMessage(s.getMessage().get());
+                    ((HasValidation) field).setInvalid(true);
+                }
             } else {
 //                if (field instanceof AbstractComponent) {
 //                    ((AbstractComponent) field).setComponentError(null);
@@ -93,7 +91,7 @@ public class BasicBinder<BEAN> {
             }
         };
 
-        public EasyBinding(BasicBinder<BEAN> binder, HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> field,
+        public EasyBinding(BasicBinder<BEAN> binder, HasValue<?, FIELDVALUE> field,
                            ValueProvider<BEAN, TARGET> getter,
                            Setter<BEAN, TARGET> setter, String property,
                            Converter<FIELDVALUE, TARGET> converterValidatorChain) {
@@ -125,7 +123,7 @@ public class BasicBinder<BEAN> {
         }
 
         @Override
-        public HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> getField() {
+        public HasValue<?, FIELDVALUE> getField() {
             return field;
         }
 
@@ -338,12 +336,12 @@ public class BasicBinder<BEAN> {
         return constraintViolations.isEmpty();
     }
 
-    public <FIELDVALUE, TARGET> EasyBinding<BEAN, FIELDVALUE, FIELDVALUE> bind(HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> field,
+    public <FIELDVALUE, TARGET> EasyBinding<BEAN, FIELDVALUE, FIELDVALUE> bind(HasValue<?, FIELDVALUE> field,
                                                                                ValueProvider<BEAN, FIELDVALUE> getter, Setter<BEAN, FIELDVALUE> setter, String property) {
         return bind(field, getter, setter, property, Converter.identity());
     }
 
-    public <FIELDVALUE, TARGET> EasyBinding<BEAN, FIELDVALUE, TARGET> bind(HasValue<ValueChangeEvent<FIELDVALUE>, FIELDVALUE> field,
+    public <FIELDVALUE, TARGET> EasyBinding<BEAN, FIELDVALUE, TARGET> bind(HasValue<?, FIELDVALUE> field,
                                                                            ValueProvider<BEAN, TARGET> getter, Setter<BEAN, TARGET> setter, String property,
                                                                            Converter<FIELDVALUE, TARGET> converter) {
 
@@ -489,6 +487,10 @@ public class BasicBinder<BEAN> {
 //        return addListener(ValueChangeEvent.class, listener::valueChanged);
 //    }
 
+    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<?>> listener) {
+        return addListener(ValueChangeEvent.class, listener::valueChanged);
+    }
+
     /**
      * Adds a listener to the binder.
      *
@@ -543,6 +545,12 @@ public class BasicBinder<BEAN> {
 //
 //        return listeners.put(BinderStatusChangeEvent.class, listener, BinderStatusChangeListener.class.getDeclaredMethods()[0]);
 //    }
+
+    public Registration addStatusChangeListener(StatusChangeListener listener) {
+        return addListener(StatusChangeEvent.class, listener::statusChange);
+    }
+
+
     public boolean getHasChanges() {
         return hasChanges;
     }

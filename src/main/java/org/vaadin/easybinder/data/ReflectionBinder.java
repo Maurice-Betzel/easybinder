@@ -196,7 +196,7 @@ public class ReflectionBinder<BEAN> extends BasicBinder<BEAN> implements HasGene
 
         // Try to find the field type using reflection. This will work for any fields
         // except fields with generic types.
-        Type valueType = GenericTypeReflector.getTypeParameter(field.getClass(), HasValue.class.getTypeParameters()[0]);
+        Type valueType = GenericTypeReflector.getTypeParameter(field.getClass(), HasValue.class.getTypeParameters()[1]);
         if (valueType != null) {
             if (valueType instanceof ParameterizedType) {
                 ParameterizedType pType = (ParameterizedType) valueType;

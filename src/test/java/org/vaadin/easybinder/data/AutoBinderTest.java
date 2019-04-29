@@ -166,7 +166,7 @@ public class AutoBinderTest {
     }
 
     @Test
-    public void testBindInstanceFieldsFieldAllreadyBoundToOtherHasValue() {
+    public void testBindInstanceFieldsFieldAlreadyBoundToOtherHasValue() {
         @SuppressWarnings("unchecked")
         HasValue<?, String> myField = mock(HasValue.class);
         binder.bind(myField, "number2");
@@ -178,7 +178,7 @@ public class AutoBinderTest {
     }
 
     @Test
-    public void testBindInstanceFieldsFieldAllreadyBoundToHasValue() {
+    public void testBindInstanceFieldsFieldAlreadyBoundToHasValue() {
         MyForm form = new MyForm();
         binder.bind(form.number2, "number2");
         binder.bindInstanceFields(form);

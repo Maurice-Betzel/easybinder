@@ -31,9 +31,6 @@ import com.vaadin.flow.data.converter.Converter;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import org.junit.Test;
 import org.vaadin.easybinder.data.BasicBinder.EasyBinding;
-//import org.vaadin.easybinder.ui.EComboBox;
-//import org.vaadin.easybinder.ui.EGTypeComponentAdapter;
-
 
 public class ReflectionBinderTest {
 	static enum TestEnum {
@@ -178,7 +175,7 @@ public class ReflectionBinderTest {
 	@Test
 	public void testGetFieldTypeForGenericFieldWithItems() {
 		EnumSet<TestEnum> set = EnumSet.allOf(TestEnum.class);
-		RadioButtonGroup<TestEnum> r = new RadioButtonGroup<TestEnum>();
+		RadioButtonGroup<TestEnum> r = new RadioButtonGroup();
 		r.setItems(set);
 		assertTrue(binder.getPresentationTypeForField(r).isPresent());
 		assertEquals(TestEnum.class, binder.getPresentationTypeForField(r).get());

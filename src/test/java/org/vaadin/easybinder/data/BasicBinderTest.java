@@ -1,23 +1,18 @@
 package org.vaadin.easybinder.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.util.Locale;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.HasValue.ValueChangeListener;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BindingValidationStatus;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.vaadin.easybinder.data.BasicBinder.EasyBinding;
+import org.vaadin.easybinder.data.converters.NullConverter;
+import org.vaadin.easybinder.data.converters.StringLengthConverterValidator;
+import org.vaadin.easybinder.usagetest.BasicBinderGroupingTest.MyEntity2;
+import org.vaadin.easybinder.usagetest.BasicBinderGroupingTest.MyGroup;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -25,37 +20,18 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.HasValue.ValueChangeListener;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.BindingValidationStatus;
-import com.vaadin.flow.data.binder.StatusChangeEvent;
-import com.vaadin.flow.data.binder.StatusChangeListener;
-import com.vaadin.flow.data.converter.StringToIntegerConverter;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.vaadin.easybinder.data.BasicBinder;
-import org.vaadin.easybinder.data.BinderStatusChangeListener;
-import org.vaadin.easybinder.data.BasicBinder.EasyBinding;
-import org.vaadin.easybinder.data.converters.NullConverter;
-import org.vaadin.easybinder.data.converters.StringLengthConverterValidator;
-import org.vaadin.easybinder.usagetest.BasicBinderGroupingTest.MyEntity2;
-import org.vaadin.easybinder.usagetest.BasicBinderGroupingTest.MyGroup;
-
-//import com.vaadin.data.BindingValidationStatus;
-//import com.vaadin.data.HasValue;
-//import com.vaadin.data.HasValue.ValueChangeListener;
-//import com.vaadin.data.converter.StringToIntegerConverter;
-//import com.vaadin.ui.Label;
-//import com.vaadin.ui.TextField;
-//import com.vaadin.ui.UI;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static info.solidsoft.mockito.java8.AssertionMatcher.assertArg;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class BasicBinderTest {
 
@@ -326,7 +302,7 @@ public class BasicBinderTest {
 
         verify(valueChangeListener, times(1)).valueChanged(any());
         verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasValidationErrors())));
-        //verify(statusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasConversionErrors())));
+        verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasConversionErrors())));
 
         assertTrue(binder.getHasChanges());
 
@@ -335,22 +311,22 @@ public class BasicBinderTest {
 
         age.setValue("nan");
 
-        //verify(valueChangeListener, times(1)).valueChange(any());
+        //verify(valueChangeListener, times(1)).valueChanged(any());
         verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasValidationErrors())));
-        //verify(statusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertTrue(sc.hasConversionErrors())));
+        verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertTrue(sc.hasConversionErrors())));
 
         reset(binderStatusChangeListener);
 
         binder.removeBean();
 
         verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasValidationErrors())));
-        //verify(statusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertTrue(sc.hasConversionErrors())));
+        verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertTrue(sc.hasConversionErrors())));
 
         reset(binderStatusChangeListener);
 
         //form.age.setValue("100");
 
-        //verify(statusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasConversionErrors())));
+//        verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasConversionErrors())));
 
     }
 

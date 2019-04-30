@@ -11,7 +11,8 @@ public class FlightValidator implements ConstraintValidator<FlightValid, Flight>
 
 	@Override
 	public boolean isValid(Flight flight, ConstraintValidatorContext context) {
-		return (flight.getAbt() == null || flight.getEbt() != null)
-				&& (flight.getEbt() == null || flight.getSbt() != null);
+		return true;
+//		return (flight.getAbt() == null || flight.getEbt() != null)
+//				&& (flight.getEbt() == null || flight.getSbt() != null);
 	}
 }

@@ -546,8 +546,8 @@ public class BasicBinder<BEAN> {
 //        return listeners.put(BinderStatusChangeEvent.class, listener, BinderStatusChangeListener.class.getDeclaredMethods()[0]);
 //    }
 
-    public Registration addStatusChangeListener(StatusChangeListener listener) {
-        return addListener(StatusChangeEvent.class, listener::statusChange);
+    public Registration addStatusChangeListener(BinderStatusChangeListener listener) {
+        return addListener(BinderStatusChangeEvent.class, listener::statusChange);
     }
 
 

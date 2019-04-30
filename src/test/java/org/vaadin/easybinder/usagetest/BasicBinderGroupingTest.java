@@ -88,15 +88,15 @@ public class BasicBinderGroupingTest {
 
 		BasicBinder<MyEntity> binder = new BasicBinder<>();
 
-		StatusChangeListener statusChangeListener = mock(StatusChangeListener.class);
-		binder.addStatusChangeListener(statusChangeListener);
+		BinderStatusChangeListener binderStatusChangeListener = mock(BinderStatusChangeListener.class);
+		binder.addStatusChangeListener(binderStatusChangeListener);
 
 		binder.bind(field1, d -> d.getS1() == null ? "" : d.getS1(), (e, f) -> e.setS1("".equals(f) ? null : f), "s1");
 		binder.bind(field2, d -> d.getS2() == null ? "" : d.getS2(), (e, f) -> e.setS2("".equals(f) ? null : f), "s2");
 
 		binder.setStatusLabel(statusLabel);
 
-		reset(statusChangeListener);
+		reset(binderStatusChangeListener);
 
 		MyEntity bean = new MyEntity();
 
@@ -108,28 +108,28 @@ public class BasicBinderGroupingTest {
 
 		binder.setBean(bean);
 
-		verify(statusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertTrue(sc.hasValidationErrors())));
+		verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertTrue(sc.hasValidationErrors())));
 
 		assertFalse(binder.isValid());
 
-		reset(statusChangeListener);
+		reset(binderStatusChangeListener);
 
 		field1.setValue("");
 
 		assertTrue(binder.isValid());
 
-		verify(statusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasValidationErrors())));
+		verify(binderStatusChangeListener, atLeast(1)).statusChange(assertArg(sc -> assertFalse(sc.hasValidationErrors())));
 
-		reset(statusChangeListener);
+		reset(binderStatusChangeListener);
 
 		field1.setValue("test");
 
-		verify(statusChangeListener, times(1)).statusChange(assertArg(sc -> assertTrue(sc.hasValidationErrors())));
+		verify(binderStatusChangeListener, times(1)).statusChange(assertArg(sc -> assertTrue(sc.hasValidationErrors())));
 
-		reset(statusChangeListener);
+		reset(binderStatusChangeListener);
 
 		binder.removeBean();
 
-		verify(statusChangeListener, times(1)).statusChange(assertArg(sc -> assertFalse(sc.hasValidationErrors())));
+		verify(binderStatusChangeListener, times(1)).statusChange(assertArg(sc -> assertFalse(sc.hasValidationErrors())));
 	}
 }

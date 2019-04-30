@@ -89,13 +89,13 @@ public class ComponentFactoryRegistry {
 		addBuildPattern(Date.class,
 				e -> Arrays.asList(e.getAnnotations()).stream().filter(f -> f instanceof Temporal)
 						.map(f -> (Temporal) f).filter(f -> f.value() == TemporalType.TIMESTAMP).findAny().isPresent(),
-				e -> new DatePicker(SharedUtil.camelCaseToHumanFriendly(e.getName())));
+				e -> new DatePicker()); //SharedUtil.camelCaseToHumanFriendly(e.getName())
 		addBuildPattern(Date.class,
 				e -> !Arrays.asList(e.getAnnotations()).stream().filter(f -> f instanceof Temporal)
 						.map(f -> (Temporal) f).filter(f -> f.value() == TemporalType.TIMESTAMP).findAny().isPresent(),
-				e -> new DatePicker(SharedUtil.camelCaseToHumanFriendly(e.getName())));
+				e -> new DatePicker()); //SharedUtil.camelCaseToHumanFriendly(e.getName())
 		addBuildPattern(LocalDate.class, e -> true,
-				e -> new DatePicker(SharedUtil.camelCaseToHumanFriendly(e.getName())));
+				e -> new DatePicker()); //SharedUtil.camelCaseToHumanFriendly(e.getName())
 //		addBuildPattern(LocalDateTime.class, e -> true,
 //				e -> new DateTimeField(SharedUtil.camelCaseToHumanFriendly(e.getName())));
 		addBuildPattern(Boolean.class, e -> true, e -> new Checkbox(SharedUtil.camelCaseToHumanFriendly(e.getName())));

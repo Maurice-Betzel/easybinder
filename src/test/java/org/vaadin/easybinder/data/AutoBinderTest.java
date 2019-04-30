@@ -235,16 +235,16 @@ public class AutoBinderTest {
         numberField.setValue("100");
         assertEquals(new Integer(100), entity.getNumber());
 
-        assertNull(((HasValidation)numberField).getErrorMessage());
+        assertNull(((HasValidation) numberField).getErrorMessage());
         numberField.setValue("0");
-        assertNotNull(((HasValidation)numberField).getErrorMessage());
+        assertNotNull(((HasValidation) numberField).getErrorMessage());
         numberField.setValue("");
 
         assertEquals(null, entity.getNumber());
-        assertNull(((HasValidation)numberField).getErrorMessage());
+        assertNotNull(((HasValidation) numberField).getErrorMessage());
 
         numberField2.setValue("");
-        assertNotNull(((HasValidation)numberField2).getErrorMessage());
+        assertNotNull(((HasValidation) numberField2).getErrorMessage());
     }
 
     @SuppressWarnings("unchecked")
@@ -272,16 +272,16 @@ public class AutoBinderTest {
         numberField.setValue("100");
         assertEquals(new Integer(100), entity.getNumber());
 
-        assertNull(((HasValidation)numberField).getErrorMessage());
+        assertNull(((HasValidation) numberField).getErrorMessage());
         numberField.setValue("0");
-        assertNotNull(((HasValidation)numberField).getErrorMessage());
+        assertNotNull(((HasValidation) numberField).getErrorMessage());
         numberField.setValue("");
 
         assertEquals(null, entity.getNumber());
-        assertNull(((HasValidation)numberField).getErrorMessage());
+        assertNotNull(((HasValidation) numberField).getErrorMessage());
 
         numberField2.setValue("");
-        assertNotNull(((HasValidation)numberField2).getErrorMessage());
+        assertNotNull(((HasValidation) numberField2).getErrorMessage());
     }
 
 }

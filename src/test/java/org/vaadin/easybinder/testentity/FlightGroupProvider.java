@@ -20,9 +20,9 @@ public class FlightGroupProvider implements DefaultGroupSequenceProvider<Flight>
 			return classes;
 		}
 
-		if (flight.getSbt() != null) {
-			classes.add(Scheduled.class);
-		}
+//		if (flight.getSbt() != null) {
+//			classes.add(Scheduled.class);
+//		}
 
 		return classes;
 	}
